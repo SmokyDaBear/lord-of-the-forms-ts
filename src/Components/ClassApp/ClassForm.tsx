@@ -1,17 +1,16 @@
-import { Component, createRef } from "react";
+import { Component } from "react";
 import { UserInformation } from "../../types";
-import { isEmailValid } from "../../utils/validations";
+import {
+  checkOnlyLettersOrSpacesMinLengthTwo,
+  isEmailValid,
+  isValidCity,
+  validatePhone,
+} from "../../utils/validations";
 import { ClassFormInput } from "./ClassFormInput";
 import { createOnChangeHandler } from "../../utils/create-onchange-handler";
 import { ClassPhoneInput } from "./ClassPhoneInput";
-import { allCities } from "../../utils/all-cities";
 import { capitalize } from "../../utils/transformations";
-
-const firstNameErrorMessage = "First name must be at least 2 characters long";
-const lastNameErrorMessage = "Last name must be at least 2 characters long";
-const emailErrorMessage = "Email is Invalid";
-const cityErrorMessage = "State is Invalid";
-const phoneNumberErrorMessage = "Invalid Phone Number";
+import errorMessages from "../../Db/errorMessages";
 
 type TClassFormProps = {
   setUser: (val: UserInformation) => void;
@@ -76,20 +75,12 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
 
     //Form Validation:
     const validator = {
-      firstName: /^[a-z | \s]{2,}$/i.test(firstName),
-      lastName: /^[a-z | \s]{2,}$/i.test(lastName),
+      firstName: checkOnlyLettersOrSpacesMinLengthTwo(firstName),
+      lastName: checkOnlyLettersOrSpacesMinLengthTwo(lastName),
       email: isEmailValid(email),
-      city: allCities.filter((cityName) => cityName === city).length === 1,
-      phone: /^\d{7}$/.test(phone.join("")),
+      city: isValidCity(city),
+      phone: validatePhone(phone),
     };
-
-    //Phone References:
-    const phoneRefs = [
-      createRef<HTMLInputElement | null>(),
-      createRef<HTMLInputElement | null>(),
-      createRef<HTMLInputElement | null>(),
-      createRef<HTMLInputElement | null>(),
-    ];
 
     return (
       <form onSubmit={(e) => this.submissionHandler(e, validator)}>
@@ -100,7 +91,7 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
         {/* first name input */}
         <ClassFormInput
           label="First Name"
-          errorMessage={firstNameErrorMessage}
+          errorMessage={errorMessages.firstNameErrorMessage}
           show={!validator.firstName && isSubmitted}
           properties={{
             placeholder: "Bilbo",
@@ -115,7 +106,7 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
         {/* last name input */}
         <ClassFormInput
           label="Last Name"
-          errorMessage={lastNameErrorMessage}
+          errorMessage={errorMessages.lastNameErrorMessage}
           show={!validator.lastName && isSubmitted}
           properties={{
             placeholder: "Baggins",
@@ -132,7 +123,7 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
         <ClassFormInput
           label="Email"
           show={!validator.email && isSubmitted}
-          errorMessage={emailErrorMessage}
+          errorMessage={errorMessages.emailErrorMessage}
           properties={{
             placeholder: "bilbo-baggins@adventurehobbits.net",
             value: email,
@@ -147,7 +138,7 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
         <ClassFormInput
           label="City"
           show={!validator.city && isSubmitted}
-          errorMessage={cityErrorMessage}
+          errorMessage={errorMessages.cityErrorMessage}
           properties={{
             placeholder: "Hobbiton",
             value: city,
@@ -155,17 +146,16 @@ export class ClassForm extends Component<TClassFormProps, TCLassFormState> {
             list: "cities",
             onChange: createOnChangeHandler({
               cb: (val: string) => this.setState({ city: val }),
-              options: ["no-digits"],
+              options: ["city-names"],
             }),
           }}
         />
         <ClassPhoneInput
           phone={phone}
-          phoneRefs={phoneRefs}
           setPhone={(arr: string[]) => this.setState({ phone: arr })}
           show={!validator.phone && isSubmitted}
           key={"class-phone"}
-          errorMessage={phoneNumberErrorMessage}
+          errorMessage={errorMessages.phoneNumberErrorMessage}
         />
 
         <input type="submit" value="Submit" />

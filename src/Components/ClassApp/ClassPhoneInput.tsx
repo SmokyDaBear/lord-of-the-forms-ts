@@ -1,9 +1,8 @@
-import { Component } from "react";
+import { Component, createRef } from "react";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { createOnChangeHandlerPhone } from "../../utils/create-onchange-handler";
 
 type TClassPhoneInputProps = {
-  phoneRefs: React.MutableRefObject<HTMLInputElement | null>[];
   phone: string[];
   setPhone: (v: string[]) => void;
   show: boolean;
@@ -13,7 +12,16 @@ type TClassPhoneInputProps = {
 export class ClassPhoneInput extends Component<TClassPhoneInputProps> {
   render() {
     const inputIndices = [0, 1, 2, 3];
-    const { phoneRefs, phone, setPhone, show, errorMessage } = this.props;
+    const { phone, setPhone, show, errorMessage } = this.props;
+
+    //Phone References:
+    const phoneRefs = [
+      createRef<HTMLInputElement>(),
+      createRef<HTMLInputElement>(),
+      createRef<HTMLInputElement>(),
+      createRef<HTMLInputElement>(),
+    ];
+
     return (
       <>
         <div className="input-wrap" key={"class-phone-container"}>

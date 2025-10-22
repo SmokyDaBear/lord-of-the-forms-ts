@@ -1,25 +1,31 @@
 import React from "react";
 import { TReactClickEvent } from "../types";
 import { capitalize } from "./transformations";
+import { filterCharacters } from "./validations";
 
 //OnChangeHandlers:
-type validOptions = "capitalize" | "no-digits";
+type validOptions = "capitalize" | "no-digits" | "city-names";
 
 export type TCreateOnChangeHandlerProps = {
   cb: (str: string) => void;
   options?: validOptions[];
 };
+
 export const createOnChangeHandler =
   (props: TCreateOnChangeHandlerProps) => (e: TReactClickEvent) => {
     const { cb, options } = props;
     let updateString = options?.includes("capitalize")
       ? capitalize(e.target.value)
       : e.target.value;
-    if (options?.includes("no-digits") && !/^[a-z|\s]*$/i.test(updateString))
-      updateString = updateString
-        .split("")
-        .filter((c) => /[a-z|\s]/i.test(c))
-        .join("");
+    if (options?.includes("no-digits")) {
+      updateString = filterCharacters(updateString, /^[\p{Letter}\s]+$/iu);
+    }
+    if (options?.includes("city-names")) {
+      updateString = filterCharacters(
+        updateString,
+        /^[\p{Letter}\s,'"()-]+$/iu
+      );
+    }
 
     cb(updateString);
   };

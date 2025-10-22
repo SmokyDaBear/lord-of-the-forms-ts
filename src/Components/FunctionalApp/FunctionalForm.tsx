@@ -1,11 +1,15 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { UserInformation } from "../../types";
 
-import { isEmailValid } from "../../utils/validations";
+import {
+  checkOnlyLettersOrSpacesMinLengthTwo,
+  isEmailValid,
+  isValidCity,
+  validatePhone,
+} from "../../utils/validations";
 import { FunctionalFormInput } from "./FunctionalFormInput";
 import { createOnChangeHandler } from "../../utils/create-onchange-handler";
 import { FunctionalPhoneInput } from "./FunctionalPhoneInput";
-import { allCities } from "../../utils/all-cities";
 import { capitalize } from "../../utils/transformations";
 import errorMessages from "../../Db/errorMessages";
 
@@ -22,21 +26,13 @@ export const FunctionalForm = ({ setUserData }: TFunctionalFormProps) => {
   const [phone, setPhone] = useState(["", "", "", ""]);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  //Refs:
-  const phoneRefs = [
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-  ];
-
   //Form Validation:
   const validator = {
-    firstName: /^[a-z | \s]{2,}$/i.test(firstName),
-    lastName: /^[a-z | \s]{2,}$/i.test(lastName),
+    firstName: checkOnlyLettersOrSpacesMinLengthTwo(firstName),
+    lastName: checkOnlyLettersOrSpacesMinLengthTwo(lastName),
     email: isEmailValid(email),
-    city: allCities.filter((cityName) => cityName === city).length === 1,
-    phone: /^\d{7}$/.test(phone.join("")),
+    city: isValidCity(city),
+    phone: validatePhone(phone),
   };
 
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -123,13 +119,12 @@ export const FunctionalForm = ({ setUserData }: TFunctionalFormProps) => {
           value: city,
           onChange: createOnChangeHandler({
             cb: setCity,
-            options: ["no-digits"],
+            options: ["city-names"],
           }),
         }}
       />
 
       <FunctionalPhoneInput
-        phoneRefs={phoneRefs}
         phone={phone}
         setPhone={setPhone}
         show={!validator.phone && isSubmitted}

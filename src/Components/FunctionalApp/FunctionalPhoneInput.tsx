@@ -1,8 +1,8 @@
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { createOnChangeHandlerPhone } from "../../utils/create-onchange-handler";
+import { useRef } from "react";
 
 type TFunctionalPhoneInputProps = {
-  phoneRefs: React.MutableRefObject<HTMLInputElement | null>[];
   phone: string[];
   setPhone: (v: string[]) => void;
   show: boolean;
@@ -10,13 +10,21 @@ type TFunctionalPhoneInputProps = {
 };
 
 export function FunctionalPhoneInput({
-  phoneRefs,
   phone,
   setPhone,
   show,
   errorMessage,
 }: TFunctionalPhoneInputProps) {
   const inputIndices = [0, 1, 2, 3];
+
+  //Refs:
+  const phoneRefs = [
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+  ];
+
   return (
     <>
       <div className="input-wrap" key={"functional-phone-container"}>
