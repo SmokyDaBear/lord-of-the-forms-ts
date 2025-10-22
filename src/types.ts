@@ -1,7 +1,10 @@
 export type UserInformation = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    city: string;
-    phone: string;
-}
+  firstName: string;
+  lastName: string;
+  email: string;
+  city: string;
+  phone: string;
+};
+
+//React Click Event:
+export type TReactClickEvent = React.ChangeEvent<HTMLInputElement>;

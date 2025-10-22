@@ -116,6 +116,12 @@ form label {
   flex: 2;
   width: 400px;
 }
+.input-div {
+  width: fit-content;
+  gap: 1.3rem;
+  justify-content: space-between;
+  display: flex;
+}
 
 .error-message {
   border: 1px solid black;

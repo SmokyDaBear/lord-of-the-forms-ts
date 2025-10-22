@@ -1,4 +1,5 @@
-import { UserInformation } from "./types";
+import { UserInformation } from "../../types";
+import { formatPhoneNumber } from "../../utils/transformations";
 
 export const InfoRow = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -28,6 +29,7 @@ export const ProfileInformation = ({
     );
   }
   const { email, firstName, lastName, phone, city } = userData;
+  const formattedPhone = formatPhoneNumber(phone);
   return (
     <>
       <u>
@@ -38,8 +40,7 @@ export const ProfileInformation = ({
         <InfoRow label="First Name" value={firstName} />
         <InfoRow label="Last Name" value={lastName} />
         <InfoRow label="City" value={city} />
-        {/* You will need to format the string "nnnnnnn" as "nn-nn-nn-n" */}
-        <InfoRow label="Phone" value={"12-34-56-7"} />
+        <InfoRow label="Phone" value={formattedPhone} />
       </div>
     </>
   );
